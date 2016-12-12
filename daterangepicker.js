@@ -54,6 +54,8 @@
         this.autoUpdateInput = true;
         this.alwaysShowCalendars = false;
         this.ranges = {};
+        this.fontAwesomePrefix = "fa";
+        this.glyphiconPrefix = "glyphicon";
 
         this.opens = 'right';
         if (this.element.hasClass('pull-right'))
@@ -95,16 +97,22 @@
         //data-api options will be overwritten with custom javascript options
         options = $.extend(this.element.data(), options);
 
+        if (typeof options.fontAwesomePrefix === 'string')
+            this.fontAwesomePrefix = options.fontAwesomePrefix;
+
+        if (typeof options.glyphiconPrefix === 'string')
+            this.glyphiconPrefix = options.glyphiconPrefix;
+
         //html template for the picker UI
         if (typeof options.template !== 'string' && !(options.template instanceof $))
             options.template = '<div class="daterangepicker dropdown-menu">' +
                 '<div class="calendar left">' +
                     '<div class="daterangepicker_input">' +
                       '<input class="input-mini form-control" type="text" name="daterangepicker_start" value="" />' +
-                      '<i class="fa fa-calendar glyphicon glyphicon-calendar"></i>' +
+                      '<i class="' + this._iconString(this.fontAwesomePrefix, 'calendar') + ' ' + this._iconString(this.glyphiconPrefix, 'calendar') + '"></i>' +
                       '<div class="calendar-time">' +
                         '<div></div>' +
-                        '<i class="fa fa-clock-o glyphicon glyphicon-time"></i>' +
+                        '<i class="' + this._iconString(this.fontAwesomePrefix, 'clock-o') + ' ' + this._iconString(this.glyphiconPrefix, 'time') + '"></i>' +
                       '</div>' +
                     '</div>' +
                     '<div class="calendar-table"></div>' +
@@ -112,10 +120,10 @@
                 '<div class="calendar right">' +
                     '<div class="daterangepicker_input">' +
                       '<input class="input-mini form-control" type="text" name="daterangepicker_end" value="" />' +
-                      '<i class="fa fa-calendar glyphicon glyphicon-calendar"></i>' +
+                      '<i class="' + this._iconString(this.fontAwesomePrefix, 'calendar') + ' ' + this._iconString(this.glyphiconPrefix, 'calendar') + '"></i>' +
                       '<div class="calendar-time">' +
                         '<div></div>' +
-                        '<i class="fa fa-clock-o glyphicon glyphicon-time"></i>' +
+                        '<i class="' + this._iconString(this.fontAwesomePrefix, 'clock-o') + ' ' + this._iconString(this.glyphiconPrefix, 'time') + '"></i>' +
                       '</div>' +
                     '</div>' +
                     '<div class="calendar-table"></div>' +
@@ -330,7 +338,7 @@
 
                 // If the end of the range is before the minimum or the start of the range is
                 // after the maximum, don't display this range option at all.
-                if ((this.minDate && end.isBefore(this.minDate, this.timepicker ? 'minute' : 'day')) 
+                if ((this.minDate && end.isBefore(this.minDate, this.timepicker ? 'minute' : 'day'))
                   || (maxDate && start.isAfter(maxDate, this.timepicker ? 'minute' : 'day')))
                     continue;
 
@@ -706,7 +714,7 @@
                 html += '<th></th>';
 
             if ((!minDate || minDate.isBefore(calendar.firstDay)) && (!this.linkedCalendars || side == 'left')) {
-                html += '<th class="prev available"><i class="fa fa-' + arrow.left + ' glyphicon glyphicon-' + arrow.left + '"></i></th>';
+                html += '<th class="prev available"><i class="' + this._iconString(this.fontAwesomePrefix, arrow.left) + ' ' + this._iconString(this.glyphiconPrefix, arrow.left)  + '"></i></th>';
             } else {
                 html += '<th></th>';
             }
@@ -739,16 +747,16 @@
                 for (var y = minYear; y <= maxYear; y++) {
                     yearHtml += '<option value="' + y + '"' +
                         (y === currentYear ? ' selected="selected"' : '') +
-                        '>' + y + '</option>';
+                        '>' + y + '年</option>';
                 }
                 yearHtml += '</select>';
 
-                dateHtml = monthHtml + yearHtml;
+                dateHtml = yearHtml + monthHtml;
             }
 
             html += '<th colspan="5" class="month">' + dateHtml + '</th>';
             if ((!maxDate || maxDate.isAfter(calendar.lastDay)) && (!this.linkedCalendars || side == 'right' || this.singleDatePicker)) {
-                html += '<th class="next available"><i class="fa fa-' + arrow.right + ' glyphicon glyphicon-' + arrow.right + '"></i></th>';
+                html += '<th class="next available"><i class="' + this._iconString(this.fontAwesomePrefix, arrow.right) + ' ' + this._iconString(this.glyphiconPrefix, arrow.right)  + '"></i></th>';
             } else {
                 html += '<th></th>';
             }
@@ -1524,7 +1532,7 @@
             this.container.find('input[name="daterangepicker_start"], input[name="daterangepicker_end"]').removeClass('active');
             $(e.target).addClass('active');
 
-            // Set the state such that if the user goes back to using a mouse, 
+            // Set the state such that if the user goes back to using a mouse,
             // the calendars are aware we're selecting the end of the range, not
             // the start. This allows someone to edit the end of a date range without
             // re-selecting the beginning, by clicking on the end date input then
@@ -1603,8 +1611,11 @@
             this.container.remove();
             this.element.off('.daterangepicker');
             this.element.removeData();
-        }
+        },
 
+        _iconString: function(prefix, name) {
+          return prefix + ' ' + prefix + '-' + name;
+        }
     };
 
     $.fn.daterangepicker = function(options, callback) {
